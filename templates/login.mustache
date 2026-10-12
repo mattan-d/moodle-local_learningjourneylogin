@@ -1,0 +1,40 @@
+{{!
+    Copyright © CentricApp LTD. dev@centricapp.co.il
+
+    @template local_learningjourneylogin/login
+
+    Login card for the learning journey portal.
+}}
+<div class="ljlogin">
+    <div class="ljlogin-card">
+        {{#haslogo}}
+            <img class="ljlogin-logo" src="{{logourl}}" alt="{{logoalt}}">
+        {{/haslogo}}
+        <h1 class="ljlogin-title">{{logintitle}}</h1>
+        <p class="ljlogin-subtitle">{{loginsubtitle}}</p>
+
+        {{#haserror}}
+            <div class="ljlogin-alert" role="alert">{{error}}</div>
+        {{/haserror}}
+
+        <form class="ljlogin-form" method="post" action="" autocomplete="on">
+            <input type="hidden" name="logintoken" value="{{logintoken}}">
+            <label class="ljlogin-label" for="lj-username">{{usernamelabel}}</label>
+            <input class="ljlogin-input" id="lj-username" name="username" type="text" value="{{username}}"
+                   autocomplete="username" autocapitalize="none" spellcheck="false" required>
+
+            <label class="ljlogin-label" for="lj-password">{{passwordlabel}}</label>
+            <input class="ljlogin-input" id="lj-password" name="password" type="password"
+                   autocomplete="current-password" required>
+
+            {{#hasrecaptcha}}
+                <div class="ljlogin-captcha">{{{recaptcha}}}</div>
+            {{/hasrecaptcha}}
+
+            <button class="ljlogin-submit" type="submit">{{loginlabel}}</button>
+        </form>
+
+        <a class="ljlogin-forgot" href="{{forgotpasswordurl}}">{{forgotpasswordlabel}}</a>
+        <p class="ljlogin-site">{{sitename}}</p>
+    </div>
+</div>

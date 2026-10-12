@@ -1,0 +1,56 @@
+{{!
+    Copyright © CentricApp LTD. dev@centricapp.co.il
+
+    @template local_learningjourneylogin/courses
+
+    Grid of courses that use the learningjourney format.
+}}
+<div class="ljcatalog">
+    <header class="ljcatalog-bar">
+        <div class="ljcatalog-brand">
+            {{#haslogo}}
+                <img class="ljcatalog-logo" src="{{logourl}}" alt="{{logoalt}}">
+            {{/haslogo}}
+            <div>
+                <h1 class="ljcatalog-title">{{heading}}</h1>
+                <p class="ljcatalog-intro">{{intro}}</p>
+            </div>
+        </div>
+        <div class="ljcatalog-user">
+            <span class="ljcatalog-count">{{countlabel}}</span>
+            <span class="ljcatalog-name">{{userfullname}}</span>
+            <a class="ljcatalog-logout" href="{{logouturl}}">{{logoutlabel}}</a>
+        </div>
+    </header>
+
+    {{#hascourses}}
+        <ul class="ljcatalog-grid">
+            {{#courses}}
+                <li class="ljcatalog-card">
+                    <a class="ljcatalog-media" href="{{url}}">
+                        {{#hasimage}}
+                            <img src="{{image}}" alt="">
+                        {{/hasimage}}
+                        {{^hasimage}}
+                            <img src="{{placeholder}}" alt="">
+                        {{/hasimage}}
+                    </a>
+                    <div class="ljcatalog-body">
+                        <div class="ljcatalog-meta">
+                            {{#category}}<span>{{category}}</span>{{/category}}
+                            {{#enrolled}}<span class="ljcatalog-badge">{{enrolledlabel}}</span>{{/enrolled}}
+                            {{#hidden}}<span class="ljcatalog-badge ljcatalog-badge-muted">{{hiddenlabel}}</span>{{/hidden}}
+                        </div>
+                        <h2 class="ljcatalog-name-course"><a href="{{url}}">{{fullname}}</a></h2>
+                        {{#shortname}}<p class="ljcatalog-short">{{shortname}}</p>{{/shortname}}
+                        {{#hassummary}}<p class="ljcatalog-summary">{{summary}}</p>{{/hassummary}}
+                        <a class="ljcatalog-enter" href="{{url}}">{{enterlabel}}</a>
+                    </div>
+                </li>
+            {{/courses}}
+        </ul>
+    {{/hascourses}}
+    {{^hascourses}}
+        <p class="ljcatalog-empty">{{nocourses}}</p>
+    {{/hascourses}}
+</div>
