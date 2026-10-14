@@ -50,8 +50,14 @@ if ($frm && isset($frm->username) && $errormsg === '') {
     $password = (string) ($frm->password ?? '');
     $logintoken = isset($frm->logintoken) ? (string) $frm->logintoken : '';
     $errorcode = 0;
-    $loginrecaptcha = login_captcha_enabled() ? ($frm->{'g-recaptcha-response'} ?? '') : false;
-    $user = authenticate_user_login($username, $password, false, $errorcode, $logintoken, $loginrecaptcha);
+    // Login reCAPTCHA exists from Moodle 4.3. Older sites authenticate without it.
+    $usecaptcha = function_exists('login_captcha_enabled') && login_captcha_enabled();
+    if ($usecaptcha) {
+        $loginrecaptcha = $frm->{'g-recaptcha-response'} ?? '';
+        $user = authenticate_user_login($username, $password, false, $errorcode, $logintoken, $loginrecaptcha);
+    } else {
+        $user = authenticate_user_login($username, $password, false, $errorcode, $logintoken);
+    }
 
     if ($user) {
         complete_user_login($user);
@@ -73,7 +79,7 @@ if ($frm && isset($frm->username) && $errormsg === '') {
 
     if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
         $errormsg = get_string('unauthorisedlogin', '', $username);
-    } else if ($errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
+    } else if (defined('AUTH_LOGIN_FAILED_RECAPTCHA') && $errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
         $errormsg = get_string('missingrecaptchachallengefield');
     } else {
         $errormsg = get_string('invalidlogin');
@@ -101,7 +107,7 @@ if (!empty($SESSION->ljloginusername)) {
 }
 
 $recaptchahtml = '';
-if (login_captcha_enabled()) {
+if (function_exists('login_captcha_enabled') && login_captcha_enabled()) {
     require_once($CFG->libdir . '/recaptchalib_v2.php');
     $recaptchahtml = recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey);
 }
