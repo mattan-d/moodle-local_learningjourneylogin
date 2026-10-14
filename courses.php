@@ -17,7 +17,9 @@ $PAGE->set_url(local_learningjourneylogin_courses_url());
 $PAGE->set_pagelayout('embedded');
 $PAGE->set_title(get_string('coursesheading', 'local_learningjourneylogin'));
 $PAGE->set_heading(get_string('coursesheading', 'local_learningjourneylogin'));
-$PAGE->add_body_class('ljlogin-body ljlogin-courses-body lj-dark-mode');
+// Same chrome classes as format_learningjourney content-only dark mode.
+$PAGE->add_body_class('ljlogin-body ljlogin-courses-body lj-content-only lj-dark-mode');
+$PAGE->requires->css(new moodle_url('/course/format/learningjourney/styles.css'));
 $PAGE->requires->css(new moodle_url('/local/learningjourneylogin/styles.css'));
 
 if (!isloggedin() || isguestuser()) {
@@ -25,12 +27,21 @@ if (!isloggedin() || isguestuser()) {
 }
 require_login();
 
+// Ensure format helpers (portal URLs) are available when the plugin is installed.
+$formatlib = $CFG->dirroot . '/course/format/learningjourney/lib.php';
+if (is_readable($formatlib)) {
+    require_once($formatlib);
+}
+
 $courses = local_learningjourneylogin_get_courses();
 $count = count($courses);
+$chrome = local_learningjourneylogin_chrome_context($courses, 'home');
+
+$PAGE->requires->js_call_amd('format_learningjourney/contentonly', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_learningjourneylogin/courses', [
-    ...local_learningjourneylogin_logo(),
+    'chromehtml' => $OUTPUT->render_from_template('format_learningjourney/contentonly_header', $chrome),
     'heading' => get_string('coursesheading', 'local_learningjourneylogin'),
     'intro' => get_string('coursesintro', 'local_learningjourneylogin'),
     'countlabel' => get_string('coursescount', 'local_learningjourneylogin', $count),
@@ -40,8 +51,5 @@ echo $OUTPUT->render_from_template('local_learningjourneylogin/courses', [
     'enterlabel' => get_string('entercourse', 'local_learningjourneylogin'),
     'enrolledlabel' => get_string('enrolled', 'local_learningjourneylogin'),
     'hiddenlabel' => get_string('hiddencourse', 'local_learningjourneylogin'),
-    'userfullname' => fullname($USER),
-    'logouturl' => (new moodle_url('/local/learningjourneylogin/logout.php', ['sesskey' => sesskey()]))->out(false),
-    'logoutlabel' => get_string('logout'),
 ]);
 echo $OUTPUT->footer();

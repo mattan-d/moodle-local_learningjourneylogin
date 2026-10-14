@@ -3,25 +3,16 @@
 
     @template local_learningjourneylogin/courses
 
-    Grid of courses that use the learningjourney format.
+    Grid of courses that use the learningjourney format, with content-only chrome.
 }}
+{{{chromehtml}}}
+
 <div class="ljcatalog">
-    <header class="ljcatalog-bar">
-        <div class="ljcatalog-brand">
-            {{#haslogo}}
-                <img class="ljcatalog-logo" src="{{logourl}}" alt="{{logoalt}}">
-            {{/haslogo}}
-            <div>
-                <h1 class="ljcatalog-title">{{heading}}</h1>
-                <p class="ljcatalog-intro">{{intro}}</p>
-            </div>
-        </div>
-        <div class="ljcatalog-user">
-            <span class="ljcatalog-count">{{countlabel}}</span>
-            <span class="ljcatalog-name">{{userfullname}}</span>
-            <a class="ljcatalog-logout" href="{{logouturl}}">{{logoutlabel}}</a>
-        </div>
-    </header>
+    <div class="ljcatalog-introblock">
+        <h1 class="ljcatalog-title">{{heading}}</h1>
+        <p class="ljcatalog-intro">{{intro}}</p>
+        <p class="ljcatalog-count">{{countlabel}}</p>
+    </div>
 
     {{#hascourses}}
         <ul class="ljcatalog-grid">

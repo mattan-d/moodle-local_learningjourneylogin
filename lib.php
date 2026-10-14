@@ -122,12 +122,23 @@ function local_learningjourneylogin_course_image(stdClass $course): ?string {
 function local_learningjourneylogin_get_courses(): array {
     global $DB, $OUTPUT, $USER;
 
+    // Only courses with format option "content only" enabled.
     $sql = "SELECT c.*, cc.name AS categoryname
               FROM {course} c
          LEFT JOIN {course_categories} cc ON cc.id = c.category
+              JOIN {course_format_options} cfo
+                ON cfo.courseid = c.id
+               AND cfo.format = c.format
+               AND cfo.sectionid = 0
+               AND cfo.name = :optname
+               AND cfo.value = :optvalue
              WHERE c.format = :format
           ORDER BY c.sortorder ASC, c.fullname ASC";
-    $records = $DB->get_records_sql($sql, ['format' => 'learningjourney']);
+    $records = $DB->get_records_sql($sql, [
+        'format' => 'learningjourney',
+        'optname' => 'contentonly',
+        'optvalue' => '1',
+    ]);
     $enrolled = enrol_get_users_courses($USER->id, true, 'id');
 
     $courses = [];
@@ -164,6 +175,144 @@ function local_learningjourneylogin_get_courses(): array {
     }
 
     return $courses;
+}
+
+/**
+ * Prefer an enrolled learning-journey course for portal footer deep-links.
+ *
+ * @param array<int, array<string, mixed>> $courses
+ * @return int|null
+ */
+function local_learningjourneylogin_footer_courseid(array $courses): ?int {
+    foreach ($courses as $course) {
+        if (!empty($course['enrolled']) && !empty($course['id'])) {
+            return (int) $course['id'];
+        }
+    }
+    if (!empty($courses[0]['id'])) {
+        return (int) $courses[0]['id'];
+    }
+    return null;
+}
+
+/**
+ * Shared sticky header + fixed footer chrome (matches format_learningjourney dark mode).
+ *
+ * @param array<int, array<string, mixed>> $courses
+ * @param string $activefooter One of home|personal|messages|contact.
+ * @return array<string, mixed>
+ */
+function local_learningjourneylogin_chrome_context(array $courses = [], string $activefooter = 'home'): array {
+    global $OUTPUT, $SITE, $USER, $CFG;
+
+    $homeurl = local_learningjourneylogin_courses_url();
+    $sitename = format_string($SITE->fullname, true, [
+        'context' => context_course::instance(SITEID),
+    ]);
+
+    // Same Bezeq mark as content-only course header.
+    $logourl = '';
+    $haslogo = false;
+    if (file_exists($CFG->dirroot . '/course/format/learningjourney/pix/bezeq_logo.png')) {
+        $logourl = $OUTPUT->image_url('bezeq_logo', 'format_learningjourney')->out(false);
+        $haslogo = true;
+    } else {
+        $siteLogo = local_learningjourneylogin_logo();
+        $haslogo = $siteLogo['haslogo'];
+        $logourl = $siteLogo['logourl'];
+    }
+
+    $menusections = [];
+    foreach ($courses as $course) {
+        $menusections[] = [
+            'name' => $course['fullname'],
+            'url' => $course['url'],
+            'active' => false,
+        ];
+    }
+
+    $footerhome = get_string('footerhome', 'local_learningjourneylogin');
+    $footerpersonal = get_string('footerpersonal', 'local_learningjourneylogin');
+    $footermessages = get_string('footermessages', 'local_learningjourneylogin');
+    $footercontact = get_string('footercontact', 'local_learningjourneylogin');
+
+    $courseid = local_learningjourneylogin_footer_courseid($courses);
+    $personalurl = $homeurl;
+    $messagesurl = $homeurl;
+    $contacturl = $homeurl;
+    if ($courseid && function_exists('format_learningjourney_portal_url')) {
+        $personalurl = format_learningjourney_portal_url($courseid, 'personal');
+        $messagesurl = format_learningjourney_portal_url($courseid, 'messages');
+        $contacturl = format_learningjourney_portal_url($courseid, 'contact');
+    } else if ($courseid) {
+        $personalurl = new moodle_url('/course/format/learningjourney/personal.php', ['id' => $courseid]);
+        $messagesurl = new moodle_url('/course/format/learningjourney/messages.php', ['id' => $courseid]);
+        $contacturl = new moodle_url('/course/format/learningjourney/contact.php', ['id' => $courseid]);
+    }
+
+    $footeritems = [
+        [
+            'label' => $footerhome,
+            'url' => $homeurl->out(false),
+            'icon' => $OUTPUT->pix_icon('i/home', $footerhome),
+            'active' => $activefooter === 'home',
+        ],
+        [
+            'label' => $footerpersonal,
+            'url' => $personalurl instanceof moodle_url ? $personalurl->out(false) : (string) $personalurl,
+            'icon' => $OUTPUT->pix_icon('i/user', $footerpersonal),
+            'active' => $activefooter === 'personal',
+        ],
+        [
+            'label' => $footermessages,
+            'url' => $messagesurl instanceof moodle_url ? $messagesurl->out(false) : (string) $messagesurl,
+            'icon' => $OUTPUT->pix_icon('t/messages', $footermessages),
+            'active' => $activefooter === 'messages',
+        ],
+        [
+            'label' => $footercontact,
+            'url' => $contacturl instanceof moodle_url ? $contacturl->out(false) : (string) $contacturl,
+            'icon' => $OUTPUT->pix_icon('t/email', $footercontact),
+            'active' => $activefooter === 'contact',
+        ],
+    ];
+
+    $logouturl = new moodle_url('/local/learningjourneylogin/logout.php', ['sesskey' => sesskey()]);
+
+    return [
+        'homeurl' => $homeurl->out(false),
+        'sitename' => $sitename,
+        'haslogo' => $haslogo,
+        'logourl' => $logourl,
+        'menulabel' => get_string('footermenu', 'local_learningjourneylogin'),
+        'coursemenulabel' => get_string('coursesheading', 'local_learningjourneylogin'),
+        'sectionslabel' => get_string('coursesheading', 'local_learningjourneylogin'),
+        'optionslabel' => get_string('footeraccount', 'local_learningjourneylogin'),
+        'closelabel' => get_string('closebuttontitle'),
+        'footerlabel' => get_string('footernav', 'local_learningjourneylogin'),
+        'footeritems' => $footeritems,
+        'hassections' => $menusections !== [],
+        'sections' => $menusections,
+        'hasoptions' => true,
+        'options' => [
+            [
+                'name' => fullname($USER),
+                'url' => $personalurl instanceof moodle_url ? $personalurl->out(false) : (string) $personalurl,
+                'active' => false,
+            ],
+            [
+                'name' => get_string('logout'),
+                'url' => $logouturl->out(false),
+                'active' => false,
+            ],
+        ],
+        'editurl' => null,
+        'editlabel' => '',
+        'hamburgericon' => $OUTPUT->pix_icon('i/menubars', get_string('footermenu', 'local_learningjourneylogin')),
+        // Catalog pages have no single course name/link in the menu head list.
+        'coursename' => get_string('coursesheading', 'local_learningjourneylogin'),
+        'courseurl' => $homeurl->out(false),
+    ];
 }
 
 /**

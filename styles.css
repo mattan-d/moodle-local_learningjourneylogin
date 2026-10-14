@@ -19,9 +19,14 @@ body.ljlogin-body #page,
 body.ljlogin-body .embedded-main {
     max-width: none;
     margin: 0;
-    padding: 0;
     background: transparent;
     color: #e2e8f0;
+}
+
+/* Login card page: no shell padding. Courses catalog keeps content-only gutters. */
+body.ljlogin-body:not(.ljlogin-courses-body) #page,
+body.ljlogin-body:not(.ljlogin-courses-body) .embedded-main {
+    padding: 0;
 }
 
 .ljlogin {
@@ -49,16 +54,6 @@ body.ljlogin-body .embedded-main {
     width: auto;
     height: auto;
     margin-bottom: 1.15rem;
-    object-fit: contain;
-}
-
-.ljcatalog-logo {
-    display: block;
-    flex: 0 0 auto;
-    max-width: 200px;
-    max-height: 40px;
-    width: auto;
-    height: auto;
     object-fit: contain;
 }
 
@@ -181,24 +176,20 @@ body.ljlogin-body .embedded-main {
     font-size: 0.85rem;
 }
 
+body.ljlogin-courses-body.lj-content-only .embedded-main {
+    padding-top: 0.75rem;
+    padding-bottom: 1.5rem;
+    /* Side gutters come from format_learningjourney content-only rules. */
+}
+
 .ljcatalog {
-    width: min(1120px, calc(100% - 2rem));
+    width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 1.5rem 0 3rem;
+    padding: 0.75rem 0 1.5rem;
 }
 
-.ljcatalog-bar {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: flex-end;
-    margin-bottom: 1.5rem;
-}
-
-.ljcatalog-brand {
-    display: flex;
-    gap: 0.85rem;
-    align-items: center;
+.ljcatalog-introblock {
+    margin-bottom: 1.25rem;
 }
 
 .ljcatalog-title {
@@ -209,39 +200,17 @@ body.ljlogin-body .embedded-main {
 
 .ljcatalog-intro,
 .ljcatalog-short,
-.ljcatalog-summary {
-    margin: 0.2rem 0 0;
+.ljcatalog-summary,
+.ljcatalog-count {
+    margin: 0.35rem 0 0;
 }
 
-.ljcatalog-user {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 0.9rem;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.ljcatalog-logout,
 .ljcatalog-enter {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     border-radius: 999px;
-}
-
-.ljcatalog-logout {
-    padding: 0.4rem 0.85rem;
-    background: #1e293b;
-    color: #f1f5f9;
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    font-weight: 700;
-}
-
-.ljcatalog-logout:hover,
-.ljcatalog-logout:focus {
-    background: #334155;
-    color: #fff;
 }
 
 .ljcatalog-grid {
@@ -341,13 +310,7 @@ body.ljlogin-body .embedded-main {
     color: #94a3b8;
 }
 
-@media (max-width: 720px) {
-    .ljcatalog-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .ljcatalog-user {
-        justify-content: flex-start;
-    }
+/* Keep catalog CTAs readable under content-only dark link overrides. */
+body.ljlogin-courses-body.lj-content-only.lj-dark-mode .ljcatalog-enter {
+    color: #fff;
 }
