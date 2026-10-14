@@ -176,10 +176,12 @@ body.ljlogin-body:not(.ljlogin-courses-body) .embedded-main {
     font-size: 0.85rem;
 }
 
-body.ljlogin-courses-body.lj-content-only .embedded-main {
-    padding-top: 0.75rem;
-    padding-bottom: 1.5rem;
-    /* Side gutters come from format_learningjourney content-only rules. */
+/* Header is injected above #page, same as format_learningjourney course pages. */
+body.ljlogin-courses-body.lj-content-only .lj-contentonly-header {
+    position: sticky;
+    top: 0;
+    margin: 0;
+    width: 100%;
 }
 
 .ljcatalog {

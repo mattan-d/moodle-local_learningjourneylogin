@@ -122,6 +122,12 @@ function local_learningjourneylogin_course_image(stdClass $course): ?string {
 function local_learningjourneylogin_get_courses(): array {
     global $DB, $OUTPUT, $USER;
 
+    static $courses = null;
+    if ($courses !== null) {
+        return $courses;
+    }
+    $courses = [];
+
     // Only courses with format option "content only" enabled.
     $sql = "SELECT c.*, cc.name AS categoryname
               FROM {course} c
@@ -313,6 +319,28 @@ function local_learningjourneylogin_chrome_context(array $courses = [], string $
         'coursename' => get_string('coursesheading', 'local_learningjourneylogin'),
         'courseurl' => $homeurl->out(false),
     ];
+}
+
+/**
+ * Place the content-only header above #page, flush with the top of the viewport.
+ *
+ * The format stylesheet pads .embedded-main. Rendering the header inside that
+ * shell leaves a gap above it. Course pages inject the same chrome here.
+ *
+ * @return string
+ */
+function local_learningjourneylogin_before_standard_top_of_body_html(): string {
+    global $OUTPUT, $PAGE;
+
+    if (strpos($PAGE->bodyclasses, 'ljlogin-courses-body') === false) {
+        return '';
+    }
+    if (!isloggedin() || isguestuser()) {
+        return '';
+    }
+
+    $chrome = local_learningjourneylogin_chrome_context(local_learningjourneylogin_get_courses(), 'home');
+    return $OUTPUT->render_from_template('format_learningjourney/contentonly_header', $chrome);
 }
 
 /**

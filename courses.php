@@ -35,13 +35,11 @@ if (is_readable($formatlib)) {
 
 $courses = local_learningjourneylogin_get_courses();
 $count = count($courses);
-$chrome = local_learningjourneylogin_chrome_context($courses, 'home');
 
 $PAGE->requires->js_call_amd('format_learningjourney/contentonly', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_learningjourneylogin/courses', [
-    'chromehtml' => $OUTPUT->render_from_template('format_learningjourney/contentonly_header', $chrome),
     'heading' => get_string('coursesheading', 'local_learningjourneylogin'),
     'intro' => get_string('coursesintro', 'local_learningjourneylogin'),
     'countlabel' => get_string('coursescount', 'local_learningjourneylogin', $count),
