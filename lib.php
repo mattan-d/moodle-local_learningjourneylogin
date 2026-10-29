@@ -61,6 +61,32 @@ function local_learningjourneylogin_login_copy(): array {
 }
 
 /**
+ * Identity providers shown on the standard Moodle login page (SAML2, OAuth2, and others).
+ *
+ * An empty wantsurl is pointed at the course list so SSO returns here instead of the site home.
+ *
+ * @return array{hasidentityproviders: bool, identityproviders: array, idpsheading: string}
+ */
+function local_learningjourneylogin_identity_providers(): array {
+    global $OUTPUT, $SESSION;
+
+    if (empty($SESSION->wantsurl)) {
+        $SESSION->wantsurl = local_learningjourneylogin_courses_url()->out(false);
+    }
+
+    $providers = \auth_plugin_base::prepare_identity_providers_for_output(
+        \auth_plugin_base::get_identity_providers(get_enabled_auth_plugins()),
+        $OUTPUT
+    );
+
+    return [
+        'hasidentityproviders' => $providers !== [],
+        'identityproviders' => $providers,
+        'idpsheading' => get_string('potentialidps', 'auth'),
+    ];
+}
+
+/**
  * URL of the learning journey course list.
  *
  * @return moodle_url

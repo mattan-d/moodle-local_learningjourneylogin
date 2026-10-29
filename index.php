@@ -44,6 +44,14 @@ if (isloggedin() && !isguestuser() && !$testsession && $_SERVER['REQUEST_METHOD'
     redirect($coursesurl);
 }
 
+// Same entry point as the core login page: auth plugins may redirect (for example SAML2).
+if (empty($SESSION->wantsurl)) {
+    $SESSION->wantsurl = $coursesurl->out(false);
+}
+foreach (get_enabled_auth_plugins() as $authname) {
+    get_auth_plugin($authname)->loginpage_hook();
+}
+
 $frm = data_submitted();
 if ($frm && isset($frm->username) && $errormsg === '') {
     $username = trim(core_text::strtolower((string) $frm->username));
@@ -112,10 +120,15 @@ if (function_exists('login_captcha_enabled') && login_captcha_enabled()) {
     $recaptchahtml = recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey);
 }
 
+$showloginform = get_config('core', 'showloginform');
+$showloginform = ($showloginform === false || (bool) $showloginform);
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_learningjourneylogin/login', [
     ...local_learningjourneylogin_logo(),
     ...$logincopy,
+    ...local_learningjourneylogin_identity_providers(),
+    'showloginform' => $showloginform,
     'username' => $usernamevalue,
     'error' => $errormsg,
     'haserror' => $errormsg !== '',
