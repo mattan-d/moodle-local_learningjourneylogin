@@ -49,12 +49,23 @@ body.ljlogin-body:not(.ljlogin-courses-body) .embedded-main {
 
 .ljlogin-logo {
     display: block;
-    max-width: 100%;
-    max-height: 64px;
-    width: auto;
+    width: min(200px, 72%);
+    max-width: 200px;
+    max-height: none;
     height: auto;
-    margin-bottom: 1.15rem;
+    margin: 0 auto 1.15rem;
     object-fit: contain;
+    border-radius: 1rem;
+}
+
+body.ljlogin-courses-body.lj-content-only .lj-contentonly-brand {
+    max-width: 4.75rem;
+}
+
+body.ljlogin-courses-body.lj-content-only .lj-contentonly-logo {
+    max-width: 4.25rem;
+    max-height: 4.25rem;
+    border-radius: 0.45rem;
 }
 
 .ljlogin-title,

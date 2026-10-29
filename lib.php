@@ -70,22 +70,19 @@ function local_learningjourneylogin_courses_url(): moodle_url {
 }
 
 /**
- * Site logo configured in Moodle (Appearance > Logos), via the active theme.
+ * Journey mark used on the login page and the catalog header.
  *
  * @return array{haslogo: bool, logourl: string, logoalt: string}
  */
 function local_learningjourneylogin_logo(): array {
-    global $OUTPUT, $SITE;
+    global $OUTPUT;
 
-    $logo = $OUTPUT->get_logo_url(null, 200);
-    if (!$logo) {
-        $logo = $OUTPUT->get_compact_logo_url();
-    }
+    $logo = $OUTPUT->image_url('logo', 'local_learningjourneylogin');
 
     return [
-        'haslogo' => !empty($logo),
-        'logourl' => $logo ? $logo->out(false) : '',
-        'logoalt' => format_string($SITE->fullname),
+        'haslogo' => true,
+        'logourl' => $logo->out(false),
+        'logoalt' => 'Journey',
     ];
 }
 
@@ -209,24 +206,16 @@ function local_learningjourneylogin_footer_courseid(array $courses): ?int {
  * @return array<string, mixed>
  */
 function local_learningjourneylogin_chrome_context(array $courses = [], string $activefooter = 'home'): array {
-    global $OUTPUT, $SITE, $USER, $CFG;
+    global $OUTPUT, $SITE, $USER;
 
     $homeurl = local_learningjourneylogin_courses_url();
     $sitename = format_string($SITE->fullname, true, [
         'context' => context_course::instance(SITEID),
     ]);
 
-    // Same Bezeq mark as content-only course header.
-    $logourl = '';
-    $haslogo = false;
-    if (file_exists($CFG->dirroot . '/course/format/learningjourney/pix/bezeq_logo.png')) {
-        $logourl = $OUTPUT->image_url('bezeq_logo', 'format_learningjourney')->out(false);
-        $haslogo = true;
-    } else {
-        $siteLogo = local_learningjourneylogin_logo();
-        $haslogo = $siteLogo['haslogo'];
-        $logourl = $siteLogo['logourl'];
-    }
+    $brand = local_learningjourneylogin_logo();
+    $haslogo = $brand['haslogo'];
+    $logourl = $brand['logourl'];
 
     $menusections = [];
     foreach ($courses as $course) {
