@@ -13,31 +13,40 @@
     </div>
 
     {{#hascourses}}
-        <ul class="ljcatalog-grid">
-            {{#courses}}
-                <li class="ljcatalog-card">
-                    <a class="ljcatalog-media" href="{{url}}">
-                        {{#hasimage}}
-                            <img src="{{image}}" alt="">
-                        {{/hasimage}}
-                        {{^hasimage}}
-                            <img src="{{placeholder}}" alt="">
-                        {{/hasimage}}
-                    </a>
-                    <div class="ljcatalog-body">
-                        <div class="ljcatalog-meta">
-                            {{#category}}<span>{{category}}</span>{{/category}}
-                            {{#enrolled}}<span class="ljcatalog-badge">{{enrolledlabel}}</span>{{/enrolled}}
-                            {{#hidden}}<span class="ljcatalog-badge ljcatalog-badge-muted">{{hiddenlabel}}</span>{{/hidden}}
+        <div class="format-learningjourney-mode-view">
+            <ul class="format-learningjourney-sectionlist lj-layout-grid lj-grid-cols-3 learningjourney"
+                data-for="course_sectionlist">
+                {{#courses}}
+                    <li class="section course-section main lj-card-view">
+                        <a class="lj-card-link" href="{{url}}" aria-label="{{fullname}}"></a>
+                        <div class="section-item">
+                            <div class="course-section-header">
+                                <h3 class="sectionname"><span>{{fullname}}</span></h3>
+                            </div>
+                            {{#category}}
+                                <div class="lj-card-type">{{category}}</div>
+                            {{/category}}
+                            {{#hassummary}}
+                                <p class="lj-card-summary">{{summary}}</p>
+                            {{/hassummary}}
+                            <div class="section-learningjourney-image">
+                                {{#hasimage}}
+                                    <img src="{{image}}" alt="">
+                                {{/hasimage}}
+                                {{#hidden}}
+                                    <span class="lj-card-status lj-card-status--locked">{{hiddenlabel}}</span>
+                                {{/hidden}}
+                                {{^hidden}}
+                                    {{#enrolled}}
+                                        <span class="lj-card-status">{{enrolledlabel}}</span>
+                                    {{/enrolled}}
+                                {{/hidden}}
+                            </div>
                         </div>
-                        <h2 class="ljcatalog-name-course"><a href="{{url}}">{{fullname}}</a></h2>
-                        {{#shortname}}<p class="ljcatalog-short">{{shortname}}</p>{{/shortname}}
-                        {{#hassummary}}<p class="ljcatalog-summary">{{summary}}</p>{{/hassummary}}
-                        <a class="ljcatalog-enter" href="{{url}}">{{enterlabel}}</a>
-                    </div>
-                </li>
-            {{/courses}}
-        </ul>
+                    </li>
+                {{/courses}}
+            </ul>
+        </div>
     {{/hascourses}}
     {{^hascourses}}
         <p class="ljcatalog-empty">{{nocourses}}</p>

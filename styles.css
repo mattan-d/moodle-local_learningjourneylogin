@@ -69,9 +69,7 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-logo {
 }
 
 .ljlogin-title,
-.ljcatalog-title,
-.ljcatalog-name-course,
-.ljcatalog-name-course a {
+.ljcatalog-title {
     color: #f8fafc;
 }
 
@@ -84,10 +82,7 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-logo {
 
 .ljlogin-subtitle,
 .ljcatalog-intro,
-.ljcatalog-short,
-.ljcatalog-summary,
 .ljcatalog-count,
-.ljcatalog-name,
 .ljlogin-site {
     color: #94a3b8;
 }
@@ -139,8 +134,7 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-logo {
     margin-top: 1rem;
 }
 
-.ljlogin-submit,
-.ljcatalog-enter {
+.ljlogin-submit {
     border: 0;
     background: #2563eb;
     color: #fff;
@@ -158,9 +152,7 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-logo {
 }
 
 .ljlogin-submit:hover,
-.ljlogin-submit:focus,
-.ljcatalog-enter:hover,
-.ljcatalog-enter:focus {
+.ljlogin-submit:focus {
     background: #1d4ed8;
     color: #fff;
 }
@@ -240,7 +232,7 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-header {
 }
 
 .ljcatalog {
-    width: min(1120px, 100%);
+    width: 100%;
     margin: 0 auto;
     padding: 0.75rem 0 1.5rem;
 }
@@ -256,106 +248,8 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-header {
 }
 
 .ljcatalog-intro,
-.ljcatalog-short,
-.ljcatalog-summary,
 .ljcatalog-count {
     margin: 0.35rem 0 0;
-}
-
-.ljcatalog-enter {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    border-radius: 999px;
-}
-
-.ljcatalog-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-}
-
-.ljcatalog-card {
-    display: flex;
-    flex-direction: column;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.14);
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: none;
-}
-
-.ljcatalog-media {
-    display: block;
-    aspect-ratio: 16 / 9;
-    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-}
-
-.ljcatalog-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.ljcatalog-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.95rem 1rem 1rem;
-    flex: 1;
-}
-
-.ljcatalog-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    color: #94a3b8;
-    font-size: 0.82rem;
-}
-
-.ljcatalog-badge {
-    background: #166534;
-    color: #ecfdf5;
-    border-radius: 999px;
-    padding: 0.05rem 0.5rem;
-}
-
-.ljcatalog-badge-muted {
-    background: #334155;
-    color: #f8fafc;
-}
-
-.ljcatalog-name-course {
-    margin: 0;
-    font-size: 1.12rem;
-    line-height: 1.35;
-}
-
-.ljcatalog-name-course a {
-    text-decoration: none;
-}
-
-.ljcatalog-name-course a:hover,
-.ljcatalog-name-course a:focus {
-    color: #93c5fd;
-}
-
-.ljcatalog-summary {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.ljcatalog-enter {
-    margin-top: auto;
-    align-self: flex-start;
-    padding: 0.45rem 0.9rem;
 }
 
 .ljcatalog-empty {
@@ -365,9 +259,4 @@ body.ljlogin-courses-body.lj-content-only .lj-contentonly-header {
     padding: 2rem 1.25rem;
     text-align: center;
     color: #94a3b8;
-}
-
-/* Keep catalog CTAs readable under content-only dark link overrides. */
-body.ljlogin-courses-body.lj-content-only.lj-dark-mode .ljcatalog-enter {
-    color: #fff;
 }
