@@ -15,6 +15,7 @@ $string['pluginname'] = 'כניסה למסלולי למידה';
 $string['logintitle'] = 'מסלולי למידה';
 $string['loginsubtitle'] = 'התחברו כדי לראות את המסלולים הזמינים עבורכם.';
 $string['coursesheading'] = 'מסלולי למידה';
+$string['loadingtitle'] = 'טוען';
 $string['coursesintro'] = 'קורסים במצב תוכן בלבד.';
 $string['coursescount'] = '{$a} קורסים';
 $string['nocourses'] = 'אין כרגע מסלולי למידה להצגה.';

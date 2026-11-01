@@ -4,7 +4,7 @@
 /**
  * Login screen for the learning journey portal.
  *
- * Successful sign-in is sent to the list of courses that use the learningjourney format.
+ * Successful sign-in plays the loading video, then opens the learningjourney course list.
  *
  * @package    local_learningjourneylogin
  * @copyright  CentricApp LTD. dev@centricapp.co.il
@@ -27,13 +27,14 @@ $PAGE->add_body_class('ljlogin-body lj-dark-mode');
 $PAGE->requires->css(new moodle_url('/local/learningjourneylogin/styles.css'));
 
 $coursesurl = local_learningjourneylogin_courses_url();
+$afterloginurl = local_learningjourneylogin_loading_url();
 $testsession = optional_param('testsession', 0, PARAM_INT);
 $errormsg = '';
 
-// Confirm the session cookie works, then continue to the course list.
+// Confirm the session cookie works, then play the loading video (or the stored return URL).
 if ($testsession) {
     if ((int) $testsession === (int) $USER->id) {
-        $urltogo = !empty($SESSION->wantsurl) ? $SESSION->wantsurl : $coursesurl->out(false);
+        $urltogo = !empty($SESSION->wantsurl) ? $SESSION->wantsurl : $afterloginurl->out(false);
         unset($SESSION->wantsurl);
         redirect($urltogo);
     }
@@ -46,7 +47,7 @@ if (isloggedin() && !isguestuser() && !$testsession && $_SERVER['REQUEST_METHOD'
 
 // Same entry point as the core login page: auth plugins may redirect (for example SAML2).
 if (empty($SESSION->wantsurl)) {
-    $SESSION->wantsurl = $coursesurl->out(false);
+    $SESSION->wantsurl = $afterloginurl->out(false);
 }
 foreach (get_enabled_auth_plugins() as $authname) {
     get_auth_plugin($authname)->loginpage_hook();
@@ -77,8 +78,8 @@ if ($frm && isset($frm->username) && $errormsg === '') {
             set_moodle_cookie($USER->username);
         }
 
-        // Profile completion and forced password change still win over the course list.
-        $SESSION->wantsurl = $coursesurl->out(false);
+        // Profile completion and forced password change still win over the loading video.
+        $SESSION->wantsurl = $afterloginurl->out(false);
         $urltogo = core_login_get_return_url();
         $SESSION->wantsurl = $urltogo;
         unset($SESSION->ljloginerrormsg);

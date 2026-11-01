@@ -15,6 +15,7 @@ $string['pluginname'] = 'Learning journey login';
 $string['logintitle'] = 'Learning journeys';
 $string['loginsubtitle'] = 'Sign in to see the journeys available to you.';
 $string['coursesheading'] = 'Learning journeys';
+$string['loadingtitle'] = 'Loading';
 $string['coursesintro'] = 'Courses with content-only mode enabled.';
 $string['coursescount'] = '{$a} courses';
 $string['nocourses'] = 'There are no learning journey courses to show yet.';

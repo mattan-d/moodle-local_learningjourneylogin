@@ -63,7 +63,7 @@ function local_learningjourneylogin_login_copy(): array {
 /**
  * Identity providers shown on the standard Moodle login page (SAML2, OAuth2, and others).
  *
- * An empty wantsurl is pointed at the course list so SSO returns here instead of the site home.
+ * An empty wantsurl is pointed at the loading video so SSO plays it, then opens the course list.
  *
  * @return array{hasidentityproviders: bool, identityproviders: array, idpsheading: string}
  */
@@ -71,7 +71,7 @@ function local_learningjourneylogin_identity_providers(): array {
     global $OUTPUT, $SESSION;
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = local_learningjourneylogin_courses_url()->out(false);
+        $SESSION->wantsurl = local_learningjourneylogin_loading_url()->out(false);
     }
 
     $providers = \auth_plugin_base::prepare_identity_providers_for_output(
@@ -93,6 +93,15 @@ function local_learningjourneylogin_identity_providers(): array {
  */
 function local_learningjourneylogin_courses_url(): moodle_url {
     return new moodle_url('/local/learningjourneylogin/courses.php');
+}
+
+/**
+ * Full-screen loading video shown once after sign-in.
+ *
+ * @return moodle_url
+ */
+function local_learningjourneylogin_loading_url(): moodle_url {
+    return new moodle_url('/local/learningjourneylogin/loading.php');
 }
 
 /**

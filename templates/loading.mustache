@@ -1,0 +1,17 @@
+{{!
+    @template local_learningjourneylogin/loading
+
+    Full-screen loading video played once after sign-in.
+
+    Context variables:
+    * videourl - URL of the loading video
+    * nexturl - Course list to open when the video ends
+    * loadingtitle - Accessible name for the loading state
+}}
+<meta http-equiv="refresh" content="14;url={{nexturl}}">
+<div class="ljloading" role="status" aria-label="{{loadingtitle}}">
+    <video class="ljloading-video" src="{{videourl}}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+</div>
+<noscript>
+    <p class="ljloading-fallback"><a href="{{nexturl}}">{{loadingtitle}}</a></p>
+</noscript>
