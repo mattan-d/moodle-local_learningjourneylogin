@@ -147,7 +147,7 @@ function local_learningjourneylogin_course_image(stdClass $course): ?string {
 }
 
 /**
- * Visible learning journey courses the current user is allowed to see.
+ * Visible Learning journey (app) courses the current user is allowed to see.
  *
  * @return array<int, array<string, mixed>>
  */
@@ -160,22 +160,14 @@ function local_learningjourneylogin_get_courses(): array {
     }
     $courses = [];
 
-    // Only courses with format option "content only" enabled.
+    // Content-only is always on for this format, so the course format is the filter.
     $sql = "SELECT c.*, cc.name AS categoryname
               FROM {course} c
          LEFT JOIN {course_categories} cc ON cc.id = c.category
-              JOIN {course_format_options} cfo
-                ON cfo.courseid = c.id
-               AND cfo.format = c.format
-               AND cfo.sectionid = 0
-               AND cfo.name = :optname
-               AND cfo.value = :optvalue
              WHERE c.format = :format
           ORDER BY c.sortorder ASC, c.fullname ASC";
     $records = $DB->get_records_sql($sql, [
-        'format' => 'learningjourney',
-        'optname' => 'contentonly',
-        'optvalue' => '1',
+        'format' => 'learningjourneyapp',
     ]);
     $enrolled = enrol_get_users_courses($USER->id, true, 'id');
 

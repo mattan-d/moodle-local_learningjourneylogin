@@ -2,7 +2,7 @@
 // Copyright © CentricApp LTD. dev@centricapp.co.il
 
 /**
- * List every course that uses the learningjourney course format.
+ * List every course that uses the learningjourneyapp course format.
  *
  * @package    local_learningjourneylogin
  * @copyright  CentricApp LTD. dev@centricapp.co.il
