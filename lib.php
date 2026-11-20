@@ -307,6 +307,10 @@ function local_learningjourneylogin_chrome_context(array $courses = [], string $
 
     return [
         'homeurl' => $homeurl->out(false),
+        'portalurl' => $homeurl->out(false),
+        'backlabel' => get_string('contentonlyfooterback', 'format_learningjourneyapp'),
+        'backfallbackurl' => $homeurl->out(false),
+        'hascelebration' => false,
         'sitename' => $sitename,
         'haslogo' => $haslogo,
         'logourl' => $logourl,
@@ -360,7 +364,7 @@ function local_learningjourneylogin_before_standard_top_of_body_html(): string {
     }
 
     $chrome = local_learningjourneylogin_chrome_context(local_learningjourneylogin_get_courses(), 'home');
-    return $OUTPUT->render_from_template('format_learningjourney/contentonly_header', $chrome);
+    return $OUTPUT->render_from_template('format_learningjourneyapp/contentonly_header', $chrome);
 }
 
 /**

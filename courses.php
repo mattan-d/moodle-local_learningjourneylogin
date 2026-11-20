@@ -17,9 +17,9 @@ $PAGE->set_url(local_learningjourneylogin_courses_url());
 $PAGE->set_pagelayout('embedded');
 $PAGE->set_title(get_string('coursesheading', 'local_learningjourneylogin'));
 $PAGE->set_heading(get_string('coursesheading', 'local_learningjourneylogin'));
-// Same chrome classes as format_learningjourney content-only dark mode.
+// Same chrome as the learning journey (app) course pages.
 $PAGE->add_body_class('ljlogin-body ljlogin-courses-body lj-content-only lj-dark-mode');
-$PAGE->requires->css(new moodle_url('/course/format/learningjourney/styles.css'));
+$PAGE->requires->css(new moodle_url('/course/format/learningjourneyapp/styles.css'));
 $PAGE->requires->css(new moodle_url('/local/learningjourneylogin/styles.css'));
 
 if (!isloggedin() || isguestuser()) {
@@ -27,16 +27,12 @@ if (!isloggedin() || isguestuser()) {
 }
 require_login();
 
-// Ensure format helpers (portal URLs) are available when the plugin is installed.
-$formatlib = $CFG->dirroot . '/course/format/learningjourney/lib.php';
-if (is_readable($formatlib)) {
-    require_once($formatlib);
-}
+require_once($CFG->dirroot . '/course/format/learningjourneyapp/lib.php');
 
 $courses = local_learningjourneylogin_get_courses();
 $count = count($courses);
 
-$PAGE->requires->js_call_amd('format_learningjourney/contentonly', 'init');
+$PAGE->requires->js_call_amd('format_learningjourneyapp/contentonly', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_learningjourneylogin/courses', [
