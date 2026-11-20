@@ -262,14 +262,18 @@ function local_learningjourneylogin_chrome_context(array $courses = [], string $
     $personalurl = $homeurl;
     $messagesurl = $homeurl;
     $contacturl = $homeurl;
-    if ($courseid && function_exists('format_learningjourney_portal_url')) {
+    if ($courseid && function_exists('format_learningjourneyapp_portal_url')) {
+        $personalurl = format_learningjourneyapp_portal_url($courseid, 'personal');
+        $messagesurl = format_learningjourneyapp_portal_url($courseid, 'messages');
+        $contacturl = format_learningjourneyapp_portal_url($courseid, 'contact');
+    } else if ($courseid && function_exists('format_learningjourney_portal_url')) {
         $personalurl = format_learningjourney_portal_url($courseid, 'personal');
         $messagesurl = format_learningjourney_portal_url($courseid, 'messages');
         $contacturl = format_learningjourney_portal_url($courseid, 'contact');
     } else if ($courseid) {
-        $personalurl = new moodle_url('/course/format/learningjourney/personal.php', ['id' => $courseid]);
-        $messagesurl = new moodle_url('/course/format/learningjourney/messages.php', ['id' => $courseid]);
-        $contacturl = new moodle_url('/course/format/learningjourney/contact.php', ['id' => $courseid]);
+        $personalurl = new moodle_url('/course/format/learningjourneyapp/personal.php', ['id' => $courseid]);
+        $messagesurl = new moodle_url('/course/format/learningjourneyapp/messages.php', ['id' => $courseid]);
+        $contacturl = new moodle_url('/course/format/learningjourneyapp/contact.php', ['id' => $courseid]);
     }
 
     $footeritems = [
