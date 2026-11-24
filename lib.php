@@ -63,14 +63,14 @@ function local_learningjourneylogin_login_copy(): array {
 /**
  * Identity providers shown on the standard Moodle login page (SAML2, OAuth2, and others).
  *
- * An empty wantsurl is pointed at the course list so SSO returns there.
+ * An empty wantsurl, or Moodle's own front page, is pointed at the course list so SSO returns there.
  *
  * @return array{hasidentityproviders: bool, identityproviders: array, idpsheading: string}
  */
 function local_learningjourneylogin_identity_providers(): array {
     global $OUTPUT, $SESSION;
 
-    if (empty($SESSION->wantsurl)) {
+    if (empty($SESSION->wantsurl) || local_learningjourneylogin_is_site_home_url((string) $SESSION->wantsurl)) {
         $SESSION->wantsurl = local_learningjourneylogin_courses_url()->out(false);
     }
 
@@ -93,6 +93,98 @@ function local_learningjourneylogin_identity_providers(): array {
  */
 function local_learningjourneylogin_courses_url(): moodle_url {
     return new moodle_url('/local/learningjourneylogin/courses.php');
+}
+
+/**
+ * Whether this request is the learning journey Android app.
+ *
+ * @return bool
+ */
+function local_learningjourneylogin_is_app(): bool {
+    if (defined('CLI_SCRIPT') && CLI_SCRIPT) {
+        return false;
+    }
+    return str_contains((string) core_useragent::get_user_agent_string(), 'LearningJourneyAndroid');
+}
+
+/**
+ * Site front page, dashboard, and the core My courses page.
+ *
+ * @param string|null $script Path relative to wwwroot, as in $SCRIPT.
+ * @return bool
+ */
+function local_learningjourneylogin_is_moodle_home_script(?string $script): bool {
+    $path = '/' . ltrim((string) $script, '/');
+    $path = rtrim($path, '/');
+    if ($path === '') {
+        $path = '/';
+    }
+    return in_array($path, ['/', '/index.php', '/my', '/my/index.php', '/my/courses.php'], true);
+}
+
+/**
+ * Whether a return address is Moodle's own front page rather than a journey page.
+ *
+ * @param string $url
+ * @return bool
+ */
+function local_learningjourneylogin_is_site_home_url(string $url): bool {
+    global $CFG;
+
+    $url = trim($url);
+    if ($url === '') {
+        return false;
+    }
+    $parts = parse_url($url);
+    if ($parts === false) {
+        return false;
+    }
+    if (!empty($parts['host'])) {
+        $home = parse_url($CFG->wwwroot);
+        if (strcasecmp((string) $parts['host'], (string) ($home['host'] ?? '')) !== 0) {
+            return false;
+        }
+    }
+    return local_learningjourneylogin_is_moodle_home_script($parts['path'] ?? '/');
+}
+
+/**
+ * Keep a specific return address, and send Moodle's front page to the course list.
+ *
+ * @param string $url
+ * @return string
+ */
+function local_learningjourneylogin_course_list_or(string $url): string {
+    if ($url === '' || local_learningjourneylogin_is_site_home_url($url)) {
+        return local_learningjourneylogin_courses_url()->out(false);
+    }
+    return $url;
+}
+
+/**
+ * In the app, a logged-in visit to Moodle's front page opens the course list instead.
+ *
+ * @return void
+ */
+function local_learningjourneylogin_after_config(): void {
+    global $SCRIPT;
+
+    if (!local_learningjourneylogin_is_app()) {
+        return;
+    }
+    if ((defined('AJAX_SCRIPT') && AJAX_SCRIPT) || (defined('WS_SERVER') && WS_SERVER)) {
+        return;
+    }
+    if (!isloggedin() || isguestuser()) {
+        return;
+    }
+    if (!local_learningjourneylogin_is_moodle_home_script($SCRIPT)) {
+        return;
+    }
+
+    $target = local_learningjourneylogin_courses_url()->out(false);
+    header('Location: ' . $target, true, 303);
+    exit;
 }
 
 /**

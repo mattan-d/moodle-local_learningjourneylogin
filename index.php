@@ -34,9 +34,9 @@ $errormsg = '';
 // Confirm the session cookie works, then open the course list (or the stored return URL).
 if ($testsession) {
     if ((int) $testsession === (int) $USER->id) {
-        $urltogo = !empty($SESSION->wantsurl) ? $SESSION->wantsurl : $afterloginurl->out(false);
+        $urltogo = !empty($SESSION->wantsurl) ? (string) $SESSION->wantsurl : $afterloginurl->out(false);
         unset($SESSION->wantsurl);
-        redirect($urltogo);
+        redirect(local_learningjourneylogin_course_list_or($urltogo));
     }
     $errormsg = get_string('cookiesnotenabled');
 }
@@ -46,7 +46,7 @@ if (isloggedin() && !isguestuser() && !$testsession && $_SERVER['REQUEST_METHOD'
 }
 
 // Same entry point as the core login page: auth plugins may redirect (for example SAML2).
-if (empty($SESSION->wantsurl)) {
+if (empty($SESSION->wantsurl) || local_learningjourneylogin_is_site_home_url((string) $SESSION->wantsurl)) {
     $SESSION->wantsurl = $afterloginurl->out(false);
 }
 foreach (get_enabled_auth_plugins() as $authname) {
@@ -80,7 +80,7 @@ if ($frm && isset($frm->username) && $errormsg === '') {
 
         // Profile completion and forced password change still win over the course list.
         $SESSION->wantsurl = $afterloginurl->out(false);
-        $urltogo = core_login_get_return_url();
+        $urltogo = local_learningjourneylogin_course_list_or(core_login_get_return_url());
         $SESSION->wantsurl = $urltogo;
         unset($SESSION->ljloginerrormsg);
         redirect(new moodle_url('/local/learningjourneylogin/index.php', ['testsession' => $USER->id]));
