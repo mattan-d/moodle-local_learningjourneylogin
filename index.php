@@ -4,7 +4,7 @@
 /**
  * Login screen for the learning journey portal.
  *
- * Successful sign-in plays the loading video, then opens the learningjourney course list.
+ * Successful sign-in opens the learning journey course list.
  *
  * @package    local_learningjourneylogin
  * @copyright  CentricApp LTD. dev@centricapp.co.il
@@ -27,11 +27,11 @@ $PAGE->add_body_class('ljlogin-body lj-dark-mode');
 $PAGE->requires->css(new moodle_url('/local/learningjourneylogin/styles.css'));
 
 $coursesurl = local_learningjourneylogin_courses_url();
-$afterloginurl = local_learningjourneylogin_loading_url();
+$afterloginurl = $coursesurl;
 $testsession = optional_param('testsession', 0, PARAM_INT);
 $errormsg = '';
 
-// Confirm the session cookie works, then play the loading video (or the stored return URL).
+// Confirm the session cookie works, then open the course list (or the stored return URL).
 if ($testsession) {
     if ((int) $testsession === (int) $USER->id) {
         $urltogo = !empty($SESSION->wantsurl) ? $SESSION->wantsurl : $afterloginurl->out(false);
@@ -78,7 +78,7 @@ if ($frm && isset($frm->username) && $errormsg === '') {
             set_moodle_cookie($USER->username);
         }
 
-        // Profile completion and forced password change still win over the loading video.
+        // Profile completion and forced password change still win over the course list.
         $SESSION->wantsurl = $afterloginurl->out(false);
         $urltogo = core_login_get_return_url();
         $SESSION->wantsurl = $urltogo;
