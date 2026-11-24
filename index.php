@@ -53,6 +53,20 @@ foreach (get_enabled_auth_plugins() as $authname) {
     get_auth_plugin($authname)->loginpage_hook();
 }
 
+// The app already passed Microsoft 365, so continue that session instead of asking again.
+if (local_learningjourneylogin_is_app()
+    && $_SERVER['REQUEST_METHOD'] !== 'POST'
+    && $errormsg === ''
+    && empty($SESSION->ljloginerrormsg)
+    && empty($SESSION->lj_saml_auto)
+) {
+    $samlurl = local_learningjourneylogin_saml_url();
+    if ($samlurl !== null) {
+        $SESSION->lj_saml_auto = time();
+        redirect($samlurl);
+    }
+}
+
 $frm = data_submitted();
 if ($frm && isset($frm->username) && $errormsg === '') {
     $username = trim(core_text::strtolower((string) $frm->username));

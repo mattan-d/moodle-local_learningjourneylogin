@@ -87,6 +87,31 @@ function local_learningjourneylogin_identity_providers(): array {
 }
 
 /**
+ * Address that continues an existing Microsoft 365 session into Moodle.
+ *
+ * Prefers a SAML provider. A single other provider is used when SAML is not named.
+ *
+ * @return string|null
+ */
+function local_learningjourneylogin_saml_url(): ?string {
+    $providers = \auth_plugin_base::get_identity_providers(get_enabled_auth_plugins());
+    $only = null;
+    foreach ($providers as $idp) {
+        $url = $idp['url'] ?? '';
+        $urlstring = $url instanceof moodle_url ? $url->out(false) : (string) $url;
+        if ($urlstring === '') {
+            continue;
+        }
+        $name = core_text::strtolower((string) ($idp['name'] ?? ''));
+        if (str_contains(core_text::strtolower($urlstring), 'saml') || str_contains($name, 'saml')) {
+            return $urlstring;
+        }
+        $only = $only === null ? $urlstring : '';
+    }
+    return ($only === null || $only === '') ? null : $only;
+}
+
+/**
  * URL of the learning journey course list.
  *
  * @return moodle_url

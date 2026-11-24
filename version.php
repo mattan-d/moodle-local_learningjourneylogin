@@ -4,8 +4,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_learningjourneylogin';
-$plugin->version   = 2026112402;
-$plugin->release   = '1.0.7';
+$plugin->version   = 2026112403;
+$plugin->release   = '1.0.8';
 $plugin->maturity  = MATURITY_STABLE;
 // Same floor as format_learningjourney, so the portal can be installed on that site.
 $plugin->requires  = 2022100100;
